@@ -63,6 +63,19 @@ tags:
   - name: Orders
     description: Orders-related operations
 
+security:
+  - BasicAuth: []
+  - BearerAuth: []
+  - ApiKeyAuth: []
+  - oAuth2AuthCode:
+      - read
+      - write
+      - admin
+  - OpenId:
+      - read
+      - write
+      - admin
+
 paths:
   /categories:
     get:
@@ -71,6 +84,8 @@ paths:
       summary: List all categories
       description: Returns the list of categories supported by EazyShop
       operationId: getCategories
+      security:
+        - BasicAuth: []
       parameters:
         - name: categoryId
           in: query
@@ -128,6 +143,7 @@ paths:
       description: |
         Returns the list of categories supported by EazyShop for provided categoryId
       operationId: getCategoriesById
+      security: []
       parameters:
         - name: categoryId
           in: path
@@ -415,7 +431,6 @@ paths:
                   - $ref: '#/components/schemas/OrderSummary'
                   - $ref: '#/components/schemas/OrderAddress'
 
-
 components:
   parameters:
     orderIdQueryParam:
@@ -526,3 +541,28 @@ components:
       operationId: getOrderDetails
       parameters:
         orderId: '$response.body#/orderId'
+  securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: basic
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-KEY
+    oAuth2AuthCode:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://example.com/oauth/authorize
+          tokenUrl: https://example.com/api/oauth.access
+          scopes:
+            read: Read only access
+            write: Read Write access
+            admin: Admin access
+    OpenId:
+      type: openIdConnect
+      openIdConnectUrl: https://example.com/well-known/openid-configuration
